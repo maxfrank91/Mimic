@@ -14,12 +14,23 @@ public class Trail : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
-        actualPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        actualPos.z += 10;
-        transform.position = actualPos;
 
         if (lastPos != actualPos)
             transform.rotation = Quaternion.Euler(new Vector3(0, 0, transform.rotation.eulerAngles.z + (Vector3.Angle(lastPos, actualPos))));
         lastPos = actualPos;
+	}
+
+	public void newPos(Vector3 newPos ){
+
+		newPos.z = +10;
+		transform.position = actualPos;
+	}
+
+	void OnMouseDrag(){
+
+		Debug.Log("drag");
+		actualPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		actualPos.z += 10;
+		transform.position = actualPos;
 	}
 }
