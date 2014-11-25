@@ -16,6 +16,6 @@ public class Crackle : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
-        center = transform.position;
+        //center = transform.position;
 	}
 }

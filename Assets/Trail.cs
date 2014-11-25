@@ -18,17 +18,20 @@ public class Trail : MonoBehaviour
         if (lastPos != actualPos)
             transform.rotation = Quaternion.Euler(new Vector3(0, 0, transform.rotation.eulerAngles.z + (Vector3.Angle(lastPos, actualPos))));
         lastPos = actualPos;
+        if (Input.GetMouseButton(0)) OnMouse_Drag();
 	}
 
-	public void newPos(Vector3 newPos ){
+	public void newPos(Vector3 newPos )
+    {
 
 		newPos.z = +10;
 		transform.position = actualPos;
 	}
 
-	void OnMouseDrag(){
+	void OnMouse_Drag()
+    {
 
-		Debug.Log("drag");
+		//Debug.Log("drag");
 		actualPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		actualPos.z += 10;
 		transform.position = actualPos;
