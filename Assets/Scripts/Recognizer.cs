@@ -108,15 +108,19 @@ public class Recognizer : MonoBehaviour
                         angles[1].y - angles[2].y < angles[0].y - angles[1].y) ||
                         (angles[0].x - angles[3].x < angles[0].x - angles[1].x &&
                         angles[1].x - angles[2].x < angles[0].x - angles[1].x))
-
+                    {
+                        InputManager.SetInput(GameManager.Symbol.SQUARE);
                         Debug.Log("Viereck");
+                    }
                 }
                 if (angles.Count == 3)
-                {                     
+                {
+                    InputManager.SetInput(GameManager.Symbol.TRIANGLE);
                     Debug.Log("Dreieck");
                 }
                 if (angles.Count == 1)
                 {
+                    InputManager.SetInput(GameManager.Symbol.CIRCLE);
                     Debug.Log("Circle");
                 }
             }

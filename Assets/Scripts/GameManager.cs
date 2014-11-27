@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
     int currentSlotCount = 0;
     bool multiplayer;
 
-    int lastIndex = -1; // just for testing...
+    int lastIndex = -1; // just for testing ?
 
 	// Use this for initialization
 	void Start () 
@@ -43,10 +43,11 @@ public class GameManager : MonoBehaviour
         {   
             int input = -1;
             //Get Input Player here...
+            input = InputManager.GetInput();
             // ### Test ###
-            if (Input.GetKeyDown("1")) { input = 0; Debug.Log("Circle!"); } //Circle
-            if (Input.GetKeyDown("2")) { input = 1; Debug.Log("Square!"); } //Square
-            if (Input.GetKeyDown("3")) { input = 2; Debug.Log("Triangle!"); } //Triangle
+            //if (Input.GetKeyDown("1")) { input = 0; Debug.Log("Circle!"); } //Circle
+            //if (Input.GetKeyDown("2")) { input = 1; Debug.Log("Square!"); } //Square
+            //if (Input.GetKeyDown("3")) { input = 2; Debug.Log("Triangle!"); } //Triangle
             // ### Test ###
 
             if (input == -1) return;
@@ -64,10 +65,11 @@ public class GameManager : MonoBehaviour
 
             int input = -1;
             //Get Input Player here...
+            input = InputManager.GetInput();
             // ### Test ###
-            if (Input.GetKeyDown("1")) { input = 0; Debug.Log("Circle!"); } //Circle
-            if (Input.GetKeyDown("2")) { input = 1; Debug.Log("Square!"); } //Square
-            if (Input.GetKeyDown("3")) { input = 2; Debug.Log("Triangle!"); } //Triangle
+            //if (Input.GetKeyDown("1")) { input = 0; Debug.Log("Circle!"); } //Circle
+            //if (Input.GetKeyDown("2")) { input = 1; Debug.Log("Square!"); } //Square
+            //if (Input.GetKeyDown("3")) { input = 2; Debug.Log("Triangle!"); } //Triangle
             // ### Test ###
 
             if (input == -1) return;
@@ -132,7 +134,8 @@ public class GameManager : MonoBehaviour
         Debug.Log("WAIT!");
         currentSlotCount = START_SLOT_COUNT;
 
-        ContinueTutorial();
+        currentPhase = GamePhase.DRAW;
+        Debug.Log("DRAW!");
     }
 
     void ContinueTutorial()
