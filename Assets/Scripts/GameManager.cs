@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
     int currentSlotCount = 0;
     bool multiplayer;
 
-    GamePhase lastPhase;
+    int lastIndex = -1; // just for testing...
 
 	// Use this for initialization
 	void Start () 
@@ -98,14 +98,18 @@ public class GameManager : MonoBehaviour
         if (currentPhase == GamePhase.WAIT)
         {
             if (!multiplayer) ContinueTutorial();
+            //add multiplayer here
         }
         if (currentPhase == GamePhase.SHOW)
         {
             timer += Time.deltaTime;
 
             // SHOW AWESOME SHIT
-            Debug.Log((Symbol)symbols[index]+ "   Slot:  "+ index);
-
+            if (lastIndex != index)
+            {
+                Debug.Log((Symbol)symbols[index] + "   Input:  " + (index + 1));
+                lastIndex = index;
+            }       
             if (timer >= SHOWTIME)
             {
                 index++;
@@ -133,10 +137,19 @@ public class GameManager : MonoBehaviour
 
     void ContinueTutorial()
     {
+        if (currentSlotCount > MAX_SLOT_COUNT - 2) EndTutorial();
         index = 0;
         for (int i = 0; i < currentSlotCount; i++)
             symbols[i] = Random.Range(0, System.Enum.GetNames(typeof(Symbol)).Length);
         currentPhase = GamePhase.SHOW;
         Debug.Log("SHOW!");
+    }
+
+    void EndTutorial()
+    {
+        Debug.Log("End of Tutorial");
+        // Back to Menu ?
+        // looking for other players ?
+        // Level Up ??
     }
 }
