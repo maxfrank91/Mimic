@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class GameManager : MonoBehaviour 
 {
     // ------ Public ------
-    public enum GamePhase { DRAW, ORDER, WAIT, SHOW };
+    public enum GamePhase { DRAW, ORDER, WAIT, SHOW, TUT };
     public enum Symbol { CIRCLE, SQUARE, TRIANGLE }; // Add more later ...
     
     public GamePhase currentPhase;
@@ -18,37 +18,41 @@ public class GameManager : MonoBehaviour
 
     // ------ Private ------
     int level = 0;
+    int xp = 0;
     float timer = 0;
     int[] symbols;
     int index = 0;
     int currentSlotCount = 0;
     bool multiplayer;
-
     int lastIndex = -1; // just for testing ?
+    ImageManager im;
 
 	// Use this for initialization
 	void Start () 
     {
         // Get Player Data here
-        
+        level = PlayerData.LVL == -1 ? 0 : PlayerData.LVL;
+        xp = PlayerData.XP;
         symbols = new int[MAX_SLOT_COUNT];
         if (level == 0) StartTutorial(); //lvl up after tutorial ??
         else multiplayer = true;
+        im = GetComponent<ImageManager>();
 	}
 	
 	// Update is called once per frame
 	void Update () 
     {
         if (currentPhase == GamePhase.DRAW)
-        {   
+        {
+            //background
+            im.sprite.enabled = false;
+            //mousestuff
+            Recognizer.recog.gameObject.SetActive(true);
+
             int input = -1;
+            im.showBar(false);
             //Get Input Player here...
             input = InputManager.GetInput();
-            // ### Test ###
-            //if (Input.GetKeyDown("1")) { input = 0; Debug.Log("Circle!"); } //Circle
-            //if (Input.GetKeyDown("2")) { input = 1; Debug.Log("Square!"); } //Square
-            //if (Input.GetKeyDown("3")) { input = 2; Debug.Log("Triangle!"); } //Triangle
-            // ### Test ###
 
             if (input == -1) return;
             symbols[index] = input;
@@ -61,21 +65,23 @@ public class GameManager : MonoBehaviour
         }
         if (currentPhase == GamePhase.ORDER)
         {
+            //background
+            im.sprite.enabled = false;
+            //mousestuff
+            Recognizer.recog.gameObject.SetActive(true);
+            //time
             timer += Time.deltaTime;
+            im.showBar(true);
+            im.reduceBar(timer, currentSlotCount * TIME);
 
             int input = -1;
             //Get Input Player here...
             input = InputManager.GetInput();
-            // ### Test ###
-            //if (Input.GetKeyDown("1")) { input = 0; Debug.Log("Circle!"); } //Circle
-            //if (Input.GetKeyDown("2")) { input = 1; Debug.Log("Square!"); } //Square
-            //if (Input.GetKeyDown("3")) { input = 2; Debug.Log("Triangle!"); } //Triangle
-            // ### Test ###
 
             if (input == -1) return;
             if (input == symbols[index])
             {
-                if (index >= currentSlotCount - 1)
+                if (index >= currentSlotCount)
                 {
                     //Player wins
                     Debug.Log("You Win! Next Round!");
@@ -99,17 +105,23 @@ public class GameManager : MonoBehaviour
         }
         if (currentPhase == GamePhase.WAIT)
         {
+            im.showBar(false);
             if (!multiplayer) ContinueTutorial();
             //add multiplayer here
         }
         if (currentPhase == GamePhase.SHOW)
         {
+            //mousestuff
+            Recognizer.recog.gameObject.SetActive(false);
+            //time
+            im.showBar(true);
             timer += Time.deltaTime;
+            im.reduceBar(timer, SHOWTIME);
 
             // SHOW AWESOME SHIT
             if (lastIndex != index)
             {
-                Debug.Log((Symbol)symbols[index] + "   Input:  " + (index + 1));
+                im.showSymbol(symbols[index]);
                 lastIndex = index;
             }       
             if (timer >= SHOWTIME)
@@ -125,17 +137,37 @@ public class GameManager : MonoBehaviour
                 timer = 0;
             }
         }
+        if (currentPhase == GamePhase.TUT)
+        {
+            //mousestuff
+            Recognizer.recog.gameObject.SetActive(true);
+            // show symbol
+            im.showSymbol(symbols[index]);
+            im.showBar(false);
+
+            if (symbols[index] == InputManager.GetInput())
+            {
+                index++;
+            }
+            if (index >= currentSlotCount-1)
+            {
+                index = 0;
+                currentPhase = GamePhase.SHOW;
+                Debug.Log("SHOW!");
+            }
+        }
 	}
 
     void StartTutorial() 
     {
-        multiplayer = false;
-        currentPhase = GamePhase.WAIT;
-        Debug.Log("WAIT!");
         currentSlotCount = START_SLOT_COUNT;
-
-        currentPhase = GamePhase.DRAW;
-        Debug.Log("DRAW!");
+        multiplayer = false;
+        timer = 0;
+        index = 0;
+        for (int i = 0; i < currentSlotCount; i++)
+            symbols[i] = Random.Range(0, System.Enum.GetNames(typeof(Symbol)).Length);
+        currentPhase = GamePhase.TUT;
+        Debug.Log("TUT!");       
     }
 
     void ContinueTutorial()
@@ -150,9 +182,7 @@ public class GameManager : MonoBehaviour
 
     void EndTutorial()
     {
-        Debug.Log("End of Tutorial");
-        // Back to Menu ?
-        // looking for other players ?
-        // Level Up ??
+        PlayerData.LVL = 1;
+        Application.LoadLevel("Menu");
     }
 }

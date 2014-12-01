@@ -19,6 +19,17 @@ public class Trail : MonoBehaviour
             transform.rotation = Quaternion.Euler(new Vector3(0, 0, transform.rotation.eulerAngles.z + (Vector3.Angle(lastPos, actualPos))));
         lastPos = actualPos;
         if (Input.GetMouseButton(0)) OnMouse_Drag();
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            GetComponentInChildren<TrailRenderer>().enabled = true;
+            GetComponentInChildren<ParticleSystem>().emissionRate = 50;
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            GetComponentInChildren<TrailRenderer>().enabled = false;
+            GetComponentInChildren<ParticleSystem>().emissionRate = 0;
+        }
 	}
 
 	public void newPos(Vector3 newPos )

@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class Recognizer : MonoBehaviour 
 {
+    public static Recognizer recog;
+
     List<Vector2> lineList;
     Vector2 tmp, vCenter;
     bool done;
@@ -14,6 +16,7 @@ public class Recognizer : MonoBehaviour
 	// Use this for initialization
 	void Start () 
     {
+        recog = this;
         lineList = new List<Vector2>();
         timer = 0;
 	}
