@@ -116,16 +116,18 @@ public class Recognizer : MonoBehaviour
                         Debug.Log("Viereck");
                     }
                 }
-                if (angles.Count == 3)
+                else if (angles.Count == 3)
                 {
                     InputManager.SetInput(GameManager.Symbol.TRIANGLE);
                     Debug.Log("Dreieck");
                 }
-                if (angles.Count == 1)
+                else if (angles.Count == 1)
                 {
                     InputManager.SetInput(GameManager.Symbol.CIRCLE);
                     Debug.Log("Circle");
                 }
+                else
+                    Debug.Log("????????????????");
             }
         }
     }
