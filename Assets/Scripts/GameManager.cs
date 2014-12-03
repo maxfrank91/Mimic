@@ -5,11 +5,12 @@ using System.Collections.Generic;
 public class GameManager : MonoBehaviour 
 {
     // ------ Public ------
-    public enum GamePhase { DRAW, ORDER, WAIT, SHOW, TUT };
+    public enum GameMode { TUTORIAL, FRIEND, RANDOM };
+    public enum GamePhase { DRAW, ORDER, WAIT, SHOW, START_TUTORIAL, GAMEOVER };
     public enum Symbol { CIRCLE, SQUARE, TRIANGLE }; // Add more later ...
     
     public GamePhase currentPhase;
-
+   
     // ------ CONST ------
     const float TIME = 5;
     const float SHOWTIME = 2;
@@ -17,13 +18,15 @@ public class GameManager : MonoBehaviour
     const int MAX_SLOT_COUNT = 10; //larger ??
 
     // ------ Private ------
+
+    private GameMode currentMode;
+
     int level = 0;
     int xp = 0;
     float timer = 0;
     int[] symbols;
     int index = 0;
     int currentSlotCount = 0;
-    bool multiplayer;
     int lastIndex = -1; // just for testing ?
     ImageManager im;
 
@@ -35,7 +38,7 @@ public class GameManager : MonoBehaviour
         xp = PlayerData.XP;
         symbols = new int[MAX_SLOT_COUNT];
         if (level == 0) StartTutorial(); //lvl up after tutorial ??
-        else multiplayer = true;
+        else currentMode = GameMode.RANDOM; // ----> Friend later
         im = GetComponent<ImageManager>();
 	}
 	
@@ -43,6 +46,7 @@ public class GameManager : MonoBehaviour
 	void Update () 
     {
         int input;
+        im.SetPhase(currentPhase.ToString());
         if (currentPhase == GamePhase.DRAW)
         {
             //mousestuff
@@ -67,8 +71,8 @@ public class GameManager : MonoBehaviour
             //mousestuff
             Recognizer.recog.gameObject.SetActive(true);
             im.showBar(true);
-            
-            timer += Time.deltaTime;       
+
+            if (currentMode != GameMode.TUTORIAL) timer += Time.deltaTime;       
             im.reduceBar(timer, currentSlotCount * TIME);
 
             input = InputManager.GetInput();
@@ -94,15 +98,16 @@ public class GameManager : MonoBehaviour
             }
             else if (input != symbols[index] || timer > currentSlotCount * TIME)
             {
-                //Game over
+                if (currentMode == GameMode.TUTORIAL) return; // message: try again!!
+                timer = 0;
                 Debug.Log("Game Over!");
-                return;
+                currentPhase = GamePhase.GAMEOVER;
             }
         }
         else if (currentPhase == GamePhase.WAIT)
         {
             im.showBar(false);
-            if (!multiplayer) ContinueTutorial();
+            if (currentMode == GameMode.TUTORIAL) ContinueTutorial();
             //add multiplayer here
         }
         else if (currentPhase == GamePhase.SHOW)
@@ -124,7 +129,7 @@ public class GameManager : MonoBehaviour
                 index++;
                 timer = 0;
             }
-            if (index >= currentSlotCount - 1)
+            if (index >= currentSlotCount)
             {
                 currentPhase = GamePhase.ORDER;
                 Debug.Log("ORDER!");
@@ -132,9 +137,10 @@ public class GameManager : MonoBehaviour
                 timer = 0;
             }
         }
-        else if (currentPhase == GamePhase.TUT)
+        else if (currentPhase == GamePhase.START_TUTORIAL)
         {
-            if (symbols[index] == InputManager.GetInput())  index++;
+            if (symbols[index] == InputManager.GetInput()) index++;
+            else Debug.Log("try again");
             if (lastIndex == index) return;
             if (index >= 3)
             {
@@ -151,23 +157,33 @@ public class GameManager : MonoBehaviour
 
             lastIndex = index;
         }
+        else if (currentPhase == GamePhase.GAMEOVER)
+        {
+            timer += Time.deltaTime;
+
+            Recognizer.recog.gameObject.SetActive(false);
+            im.showBar(false);
+
+            if (timer >= TIME)
+                Application.LoadLevel("Menu");
+        }
 	}
 
     void StartTutorial() 
     {
+        currentMode = GameMode.TUTORIAL;
         currentSlotCount = START_SLOT_COUNT;
-        multiplayer = false;
         timer = 0;
         index = 0;
         for (int i = 0; i < currentSlotCount; i++)
             symbols[i] = i;
-        currentPhase = GamePhase.TUT;
+        currentPhase = GamePhase.START_TUTORIAL;
         Debug.Log("TUT!");       
     }
 
     void ContinueTutorial()
     {
-        if (currentSlotCount > MAX_SLOT_COUNT - 2) EndTutorial();
+        if (currentSlotCount > 6) EndTutorial();
         index = 0;
         for (int i = 0; i < currentSlotCount; i++)
             symbols[i] = Random.Range(0, System.Enum.GetNames(typeof(Symbol)).Length);
@@ -177,7 +193,8 @@ public class GameManager : MonoBehaviour
 
     void EndTutorial()
     {
+        // Player Win Message 
         PlayerData.LVL = 1;
-        Application.LoadLevel("Menu");
+        currentPhase = GamePhase.GAMEOVER;
     }
 }

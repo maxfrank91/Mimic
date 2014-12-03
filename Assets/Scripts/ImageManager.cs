@@ -10,10 +10,16 @@ public class ImageManager : MonoBehaviour
     public List<Sprite> textures;
     public SpriteRenderer sprite;
     public Image countdown;
+    public Text Phase;
 
     float timer = 0;
 
-    
+    public void SetPhase(string text)
+    {
+        if (Phase.text != text)
+            Phase.text = text;
+    }
+
     public void reduceBar(float value, float max)
     {
         Vector2 size = countdown.rectTransform.sizeDelta;
@@ -34,7 +40,6 @@ public class ImageManager : MonoBehaviour
         if (!video) 
             StartCoroutine(Black(TIME));
     }
-
 
     IEnumerator Black(float time)
     {
