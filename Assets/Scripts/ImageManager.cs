@@ -39,11 +39,11 @@ public class ImageManager : MonoBehaviour
         countdown.enabled = value;
     }
 
-    public void showSymbol(int index, bool video = false)
+    public void showSymbol(int index, bool blend = true)
     {
         sprite.color = Color.white;
         sprite.sprite = textures[index];
-        if (!video) 
+        if (blend) 
             StartCoroutine(Black(TIME));
     }
 

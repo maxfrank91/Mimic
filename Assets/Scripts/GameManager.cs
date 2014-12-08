@@ -120,7 +120,7 @@ public class GameManager : MonoBehaviour
             im.reduceBar(timer, SHOWTIME);         
             if (lastIndex != index)
             {
-                im.showSymbol(symbols[index], true);
+                im.showSymbol(symbols[index], false);
                 Debug.Log((Symbol)symbols[index] + ", " + index);
                 lastIndex = index;
             }       
@@ -153,7 +153,7 @@ public class GameManager : MonoBehaviour
             }
            
             Recognizer.recog.gameObject.SetActive(true);
-            im.showSymbol(symbols[index], true);
+            im.showSymbol(symbols[index], false);
             im.showBar(false);
 
             lastIndex = index;
