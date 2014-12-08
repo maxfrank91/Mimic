@@ -140,7 +140,7 @@ public class GameManager : MonoBehaviour
         else if (currentPhase == GamePhase.START_TUTORIAL)
         {
             if (symbols[index] == InputManager.GetInput()) index++;
-            else Debug.Log("try again");
+            else if (InputManager.GetInput() != -1) Debug.Log("try again");
             if (lastIndex == index) return;
             if (index >= 3)
             {
