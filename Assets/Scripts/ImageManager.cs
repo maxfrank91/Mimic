@@ -9,6 +9,7 @@ public class ImageManager : MonoBehaviour
     
     public List<Sprite> textures;
     public SpriteRenderer sprite;
+    public List<SpriteRenderer> sprites;
     public Image countdown;
     public Text Phase;
 
@@ -41,10 +42,17 @@ public class ImageManager : MonoBehaviour
 
     public void showSymbol(int index, bool blend = true)
     {
-        sprite.color = Color.white;
-        sprite.sprite = textures[index];
-        if (blend) 
-            StartCoroutine(Black(TIME));
+        if (sprites[index] == null)
+        {
+            sprite.color = Color.white;
+            sprite.sprite = textures[index];
+            if (blend)
+                StartCoroutine(Black(TIME));
+        }
+        else
+        {
+            GameObject.Instantiate(sprites[index]);
+        }
     }
 
     IEnumerator Black(float time)
