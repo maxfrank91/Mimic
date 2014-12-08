@@ -12,12 +12,18 @@ public class ImageManager : MonoBehaviour
     public Image countdown;
     public Text Phase;
 
+    Color a1 = new Color (1, 1, 1, 1);
+    Color a0 = new Color (0, 0, 0, 0);
+
     float timer = 0;
 
     public void SetPhase(string text)
     {
         if (Phase.text != text)
+        {
             Phase.text = text;
+            showPhase();
+        }
     }
 
     public void reduceBar(float value, float max)
@@ -51,5 +57,27 @@ public class ImageManager : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
         sprite.sprite = null;
+    }
+
+    public void BlackScreen()
+    {
+        sprite.color = Color.black;
+    }
+
+    void showPhase()
+    {
+        Phase.color = a1;
+        StartCoroutine(FadeText(TIME));
+    }
+
+    IEnumerator FadeText(float time)
+    {
+        float t = 0;
+        while (t != time)
+        {
+            t += Time.fixedDeltaTime;
+            Phase.color = Color.Lerp(a1, a0, t / time);
+            yield return new WaitForFixedUpdate();
+        }
     }
 }

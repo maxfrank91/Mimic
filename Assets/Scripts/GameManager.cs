@@ -86,7 +86,7 @@ public class GameManager : MonoBehaviour
                     //Player wins
                     Debug.Log("You Win! Next Round!");
                     currentPhase = GamePhase.DRAW;
-                    Debug.Log("DRAW!");
+                    Debug.Log("DRAW!"); 
                     timer = 0;
                     index = 0;
                     input = -1;
@@ -133,6 +133,7 @@ public class GameManager : MonoBehaviour
             {
                 currentPhase = GamePhase.ORDER;
                 Debug.Log("ORDER!");
+                im.BlackScreen();
                 index = 0;
                 timer = 0;
             }
